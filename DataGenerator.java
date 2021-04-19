@@ -1,9 +1,6 @@
-import java.io.PrintStream;
-import java.io.PrintWriter;
-import java.io.IOException;
 import java.util.List;
 import java.util.Random;
-
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
@@ -13,9 +10,11 @@ import joptsimple.OptionSet;
 public class DataGenerator
 {
 	private static String[] edge = new String[40000];
-	private static String[] edge1 = new String[40000];
+//	private static String[] edge1 = new String[40000];
 	private static int size = 0;
+	@SuppressWarnings("unused")
 	private static String[] vertices = new String[size];
+	
 	public static int intGenerator(Random r, int min, int max) {
 		return r.nextInt(max - min) + min;
 	}
@@ -73,20 +72,16 @@ public class DataGenerator
 	} // end of processOperations()
 
 	public static void edgeDeletion(ContactsGraph graph, int max) {
-		Random r = new Random();
 		
 		long start = System.currentTimeMillis();
 		int count = 0;
 
 		for(int i = 0; i < max; i++) {
-			int k = intGenerator(r,0,max);
-			int m = intGenerator(r,0,max);
 			char scrC = edge[i].charAt(0);
 			char tarC = edge[i].charAt(2);
 			String scr = String.valueOf(scrC);
 			String tar = String.valueOf(tarC);
 			graph.deleteEdge(scr, tar);
-	//		edge[i] = String.valueOf(i);
 			count++;
 		}
 
@@ -94,6 +89,28 @@ public class DataGenerator
 		long end = System.currentTimeMillis();
 		
 		System.out.println("Processing Time of deleting " + count + " edges is : " + (end - start) + "ms");
+	}
+	
+	public static void sirSimulation(ContactsGraph graph, int seedMaxNum, int seedsNum) {
+		String seeds[] = new String[seedsNum];
+		Random r = new Random();
+		for(int i=0; i<seedsNum; i++) {
+			int seed = intGenerator(r,0,seedMaxNum);
+			seeds[i] = String.valueOf(seed);
+		}
+		float infectionProb = (float) 0.8;
+		float recoverProb = (float) 0.5;
+		PrintWriter pw = new PrintWriter(System.out,true);
+		SIRModel sir = new SIRModel();
+		graph.toggleVertexState("0");
+		
+		long start = System.currentTimeMillis();
+		
+		sir.runSimulation(graph, seeds, infectionProb, recoverProb, pw);
+		
+		long end = System.currentTimeMillis();
+		
+		System.out.println("Processing Time of simulating the SIR model is : " + (end - start) + "ms");
 	}
 
 	/**
@@ -131,20 +148,9 @@ public class DataGenerator
 				graph = new IncidenceMatrix();
 				break;
 		}
-		vertexAddiction(graph, 3);
-		PrintWriter os = new PrintWriter(System.out, true);
-		edgeAddiction(graph,50,3);
-//		graph.printVertices(os);
-//		vertexDeletion(graph,3,3);
-//		graph.printVertices(os);
-		edgeDeletion(graph,50);
-//		graph.printEdges(os);
-	//	khopTesting(graph,1,1000);
-	//	khopTesting(graph,3,1000);
-//		khopTesting(graph,6,1000);
-//		khopTesting(graph,9,1000);
-//		khopTesting(graph,12,1000);
-//		khopTesting(graph,15,1000);
+		vertexAddiction(graph, 300);
+		edgeAddiction(graph,1000,300);
+		sirSimulation(graph,300,50);
 	} // end of main()
 
 } // end of class RmitCovidModelling
