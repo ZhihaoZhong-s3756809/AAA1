@@ -1,0 +1,35 @@
+# KN 1 A
+A: B E F
+# KN 2 A
+A: C D F G B
+# KN 1 F
+F: A B G
+# KN 1 H
+H: 
+# PV
+(A, S) (B, R) (D, S) (E, I) (F, S) (G, S) (H, S) 
+# PE
+B D
+A E
+F A
+B F
+E G
+F G
+D B
+E A
+A F
+F B
+G E
+G F
+# SIR A;F 0.8 0.5
+1: [E ] : []
+2: [B G ] : [B F G ]
+3: [] : [A ]
+4: [] : []
+5: [] : []
+6: [] : []
+7: [] : [E ]
+8: [] : []
+9: [] : []
+10: [] : []
+
